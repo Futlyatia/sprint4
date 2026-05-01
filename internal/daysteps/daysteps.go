@@ -22,16 +22,19 @@ func parsePackage(data string) (int, time.Duration, error) {
 	if len(objects) != 2 {
 		return 0, 0, errors.New("неверный формат - неправильное количество параметров")
 	}
-	if len(objects) == 0 {
-		return 0, 0, errors.New("пустой ввод")
-	}
 	steps, err := strconv.Atoi(objects[0])
 	if err != nil {
 		return 0, 0, errors.New("некорректное количество шагов")
 	}
+	if steps <= 0 {
+		return 0, 0, errors.New("нулевые шаги")
+	}
 	duration, err := time.ParseDuration(objects[1])
 	if err != nil {
 		return 0, 0, errors.New("некорректная продолжительность")
+	}
+	if duration <= 0 {
+		return 0, 0, errors.New("нулевое время")
 	}
 	return steps, duration, nil
 }
@@ -39,12 +42,13 @@ func parsePackage(data string) (int, time.Duration, error) {
 func DayActionInfo(data string, weight, height float64) string {
 	steps, duration, err := parsePackage(data)
 	if err != nil {
+		fmt.Println(err)
 		return ""
 	}
 	if steps <= 0 {
 		return ""
 	}
-	distance := float32(steps) * stepLength
+	distance := float64(steps) * stepLength
 	distance /= mInKm
 	cals, err := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 

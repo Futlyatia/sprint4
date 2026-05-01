@@ -27,16 +27,22 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	if err != nil {
 		return 0, "", 0, errors.New("некорректное количество шагов")
 	}
+	if steps <= 0 {
+		return 0, "", 0, errors.New("нулевые шаги")
+	}
 	duration, err := time.ParseDuration(objects[2])
 	if err != nil {
 		return 0, "", 0, errors.New("некорректная продолжительность")
+	}
+	if duration <= 0 {
+		return 0, "", 0, errors.New("нулевое время")
 	}
 	return steps, objects[1], duration, nil
 }
 
 func distance(steps int, height float64) float64 {
-	lenStep := height * stepLengthCoefficient
-	dist := float64(steps) * lenStep
+	lenStep1 := height * stepLengthCoefficient
+	dist := float64(steps) * lenStep1
 	dist /= mInKm
 	return float64(dist)
 }
